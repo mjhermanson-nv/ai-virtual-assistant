@@ -253,7 +253,9 @@ services:
   # =======================
   postgres:
     container_name: postgres_container
-    image: postgres:17.1
+    build:
+      context: .
+      dockerfile: postgres.Dockerfile
     environment:
       POSTGRES_USER: ${POSTGRES_USER:-postgres}
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-password}
@@ -265,8 +267,7 @@ services:
       - "-c"
       - "max_connections=200"
     volumes:
-       - ./init-scripts:/docker-entrypoint-initdb.d  # Mount initialization scripts
-       - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/postgres_data:/var/lib/postgresql/data
+      - ${DOCKER_VOLUME_DIRECTORY:-.}/volumes/postgres_data:/var/lib/postgresql/data
     ports:
       - "5432:5432"
     healthcheck:
@@ -274,7 +275,6 @@ services:
       interval: 10s
       timeout: 3s
       retries: 3
-    restart: unless-stopped
 
   # For visualization purpose
   pgadmin:
